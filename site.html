@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Evermore</title>
+  <style>
+    /* Fontes inspiradas no álbum evermore */
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=EB+Garamond:wght@400;500&family=Homemade+Apple&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Cormorant Garamond', serif;
+      color: #5a4a42;
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(rgba(244, 176, 92, 0.41), rgba(255, 188, 107, 0.7)), 
+                  url('https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YXV0dW1uJTIwd2FsbHBhcGVyfGVufDB8fDB8fHww') no-repeat center center;
+      background-size: cover;
+      background-attachment: fixed;
+    }
+
+    h1 {
+      text-align: center;
+      color: #003a01;
+      padding: 20px;
+      margin: 0;
+      z-index: 10;
+      position: relative;
+      font-family: 'Homemade Apple', cursive;
+      font-size: clamp(1.8em, 5vw, 2.8em);
+      letter-spacing: 1px;
+      user-select: none;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .heart {
+      position: absolute;
+      font-size: clamp(30px, 6vw, 40px);
+      cursor: pointer;
+      animation: float ease-in-out infinite;
+      user-select: none;
+      z-index: 10;
+      color: #382323;
+      filter: drop-shadow(0 0 4px rgba(0,0,0,0.1));
+      transition: transform 0.3s ease;
+    }
+
+    .heart:hover {
+      transform: scale(1.2);
+    }
+
+    @keyframes float {
+      0%   { transform: translateY(0px) rotate(0deg); opacity: 1; }
+      50%  { transform: translateY(-25px) rotate(5deg); }
+      100% { transform: translateY(0px) rotate(-5deg); opacity: 1; }
+    }
+
+    .message-box {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 250, 240, 0.95);
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(90, 74, 66, 0.15);
+      font-size: clamp(1em, 4vw, 1.2em);
+      color: #523211;
+      display: none;
+      z-index: 20;
+      font-family: 'EB Garamond', serif;
+      transition: opacity 0.5s ease;
+      user-select: none;
+      max-width: 85vw;
+      text-align: center;
+      border: 1px solid rgba(122, 106, 90, 0.2);
+      backdrop-filter: blur(5px);
+      width: 90%;
+      box-sizing: border-box;
+      margin: 0 auto;
+    }
+
+    /* Efeito de folhas caindo */
+    .leaf {
+      position: absolute;
+      top: -50px;
+      width: 30px;
+      height: 30px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0;
+      z-index: 1;
+      pointer-events: none;
+      animation: fall linear infinite;
+      will-change: transform;
+    }
+
+    .leaf::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+
+    .leaf.type1::before {
+      background-image: url('data:image/svg+xml;utf8,<svg fill="%236b5c4d" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,3C7.79,3,5.11,6.34,5.11,9.22C5.11,11.95,7.29,15.47,12,21c4.71-5.53,6.89-9.05,6.89-11.78C18.89,6.34,16.21,3,12,3z"/></svg>');
+    }
+
+    .leaf.type2::before {
+      background-image: url('data:image/svg+xml;utf8,<svg fill="%237a6a5a" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17,8C8,10,5.9,16.17,3.82,21.34l1.89,0.66C7.27,17,9.82,11.5,17,8z"/></svg>');
+    }
+
+    .leaf.type3::before {
+      background-image: url('data:image/svg+xml;utf8,<svg fill="%239d7463" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,3C6.5,3,2.73,7.89,2,14h2c0.73-4.67,4-8,8-8s7.27,3.33,8,8h2C21.27,7.89,17.5,3,12,3z"/></svg>');
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translate(0, -50px) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translate(var(--end-x, 0), calc(100vh + 50px)) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Efeito de neve */
+    .snowflake {
+      position: absolute;
+      top: -20px;
+      color: #ffffff;
+      font-size: clamp(10px, 3vw, 14px);
+      animation: snow-fall linear infinite;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      will-change: transform;
+    }
+
+    @keyframes snow-fall {
+      0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translate(var(--end-x, 0), calc(100vh + 20px)) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Media Queries para dispositivos móveis */
+    @media (max-width: 768px) {
+      h1 {
+        padding: 15px 10px;
+        font-size: 1.8em;
+      }
+      
+      .message-box {
+        padding: 12px 15px;
+        width: 95%;
+        bottom: 10px;
+      }
+      
+      .heart {
+        font-size: 35px;
+      }
+      
+      .leaf {
+        width: 25px;
+        height: 25px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5em;
+        padding-top: 30px;
+      }
+      
+      body {
+        background-attachment: scroll;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Evermore</h1>
+
+  <div class="message-box" id="messageBox"></div>
+
+  <script>
+    const mensagens = [
+      "I made you my temple, my mural, my sky, now i'm begging for footnotes in the story of your life",
+      "Should've kept every grocery store receipt 'Cause every scrap of you would be taken from me",
+      "I can't make it go away by making you a villain",
+      "Do you miss the rogue who coaxed you into paradise and left you there?",
+      "And i couldn't be sure, i had a feeling so peculiar that this pain would be for evermore",
+      "So I'll watch your life in pictures like I used to watch you sleep",
+      "Oh, I can't stop you putting roots in my dreamland, my house of stone, your ivy grows, and now I'm covered in you",
+      "I know that it's over, I don't need your closure"
+    ];
+
+    // Configurações ajustáveis
+    const config = {
+      desktop: {
+        hearts: 8,
+        leaves: 40,  // Aumentado para 40 folhas
+        snowflakes: 30,  // Aumentado para 30 flocos
+        elements: 70  // Total de elementos (folhas + flocos)
+      },
+      mobile: {
+        hearts: 6,
+        leaves: 25,  // Aumentado para 25 folhas
+        snowflakes: 20,  // Aumentado para 20 flocos
+        elements: 45  // Total de elementos (folhas + flocos)
+      }
+    };
+
+    const currentConfig = window.innerWidth < 768 ? config.mobile : config.desktop;
+
+    function criarCoração(index) {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.innerHTML = '🤎';
+
+      heart.style.top = `${10 + Math.random() * 80}vh`;
+      heart.style.left = `${10 + Math.random() * 80}vw`;
+      heart.style.animationDuration = `${Math.random() * 3 + 4}s`;
+      heart.style.animationDelay = `${Math.random() * 2}s`;
+
+      heart.onclick = () => {
+        mostrarMensagem(index);
+        heart.style.animation = 'none';
+        heart.style.transform = 'scale(1.5)';
+        setTimeout(() => {
+          heart.style.opacity = '0';
+          setTimeout(() => {
+            heart.remove();
+            setTimeout(() => criarCoração(Math.floor(Math.random() * mensagens.length)), 3000);
+          }, 500);
+        }, 1000);
+      };
+
+      document.body.appendChild(heart);
+    }
+
+    function mostrarMensagem(index) {
+      const msgBox = document.getElementById("messageBox");
+      msgBox.innerText = mensagens[index];
+      msgBox.style.display = 'block';
+      msgBox.style.opacity = '1';
+
+      setTimeout(() => {
+        msgBox.style.opacity = '0';
+        setTimeout(() => {
+          msgBox.style.display = 'none';
+        }, 500);
+      }, 5000);
+    }
+
+    // Criar corações iniciais
+    for (let i = 0; i < currentConfig.hearts; i++) {
+      criarCoração(i);
+    }
+
+    // Função otimizada para criar folhas
+    function criarFolha() {
+      const leaf = document.createElement('div');
+      const leafType = Math.floor(Math.random() * 3) + 1;
+      leaf.className = `leaf type${leafType}`;
+      
+      const startX = Math.random() * 100;
+      leaf.style.left = `${startX}vw`;
+      
+      const endX = (Math.random() * 60) - 30; // Maior variação horizontal
+      leaf.style.setProperty('--end-x', `${endX}vw`);
+      
+      const duration = 10 + Math.random() * 15; // Duração mais longa e variada
+      const delay = Math.random() * 10;
+      leaf.style.animationDuration = `${duration}s`;
+      leaf.style.animationDelay = `${delay}s`;
+      
+      const size = 0.5 + Math.random(); // Tamanho mais variado
+      leaf.style.transform = `scale(${size})`;
+      leaf.style.opacity = 0.3 + Math.random() * 0.7; // Opacidade mais variada
+
+      document.body.appendChild(leaf);
+
+      setTimeout(() => {
+        leaf.remove();
+        criarFolha();
+      }, (duration + delay) * 1000);
+    }
+
+    // Função otimizada para criar flocos de neve
+    function criarFlocoNeve() {
+      const floco = document.createElement('div');
+      floco.className = 'snowflake';
+      floco.innerHTML = '❄';
+      
+      const startX = Math.random() * 100;
+      floco.style.left = `${startX}vw`;
+      
+      const endX = (Math.random() * 40) - 20;
+      floco.style.setProperty('--end-x', `${endX}vw`);
+      
+      const duration = 15 + Math.random() * 20; // Duração mais longa
+      const delay = Math.random() * 10;
+      floco.style.animationDuration = `${duration}s`;
+      floco.style.animationDelay = `${delay}s`;
+      
+      floco.style.fontSize = (8 + Math.random() * 12) + 'px';
+      floco.style.opacity = 0.1 + Math.random() * 0.4;
+
+      document.body.appendChild(floco);
+
+      setTimeout(() => {
+        floco.remove();
+        criarFlocoNeve();
+      }, (duration + delay) * 1000);
+    }
+
+    // Criar elementos animados de forma balanceada
+    function iniciarElementosAnimados() {
+      // Limpar elementos existentes
+      document.querySelectorAll('.leaf, .snowflake').forEach(el => el.remove());
+      
+      // Criar folhas
+      for (let i = 0; i < currentConfig.leaves; i++) {
+        setTimeout(() => criarFolha(), i * 300); // Espaçar a criação
+      }
+      
+      // Criar flocos de neve
+      for (let i = 0; i < currentConfig.snowflakes; i++) {
+        setTimeout(() => criarFlocoNeve(), i * 300); // Espaçar a criação
+      }
+    }
+
+    // Iniciar elementos animados
+    iniciarElementosAnimados();
+
+    // Efeito de digitação para o título
+    const titulo = document.querySelector('h1');
+    const textoOriginal = titulo.textContent;
+    titulo.textContent = '';
+    
+    let i = 0;
+    const digitar = () => {
+      if (i < textoOriginal.length) {
+        titulo.textContent += textoOriginal.charAt(i);
+        i++;
+        setTimeout(digitar, 100);
+      }
+    };
+    
+    setTimeout(digitar, 1000);
+
+    // Redimensionamento responsivo
+    window.addEventListener('resize', function() {
+      const hearts = document.querySelectorAll('.heart');
+      hearts.forEach(heart => {
+        const currentTop = parseFloat(heart.style.top);
+        const currentLeft = parseFloat(heart.style.left);
+        
+        if (currentTop < 5 || currentTop > 95) {
+          heart.style.top = `${5 + Math.random() * 90}vh`;
+        }
+        if (currentLeft < 5 || currentLeft > 95) {
+          heart.style.left = `${5 + Math.random() * 90}vw`;
+        }
+      });
+      
+      // Recriar elementos animados ao redimensionar
+      const newConfig = window.innerWidth < 768 ? config.mobile : config.desktop;
+      if (newConfig !== currentConfig) {
+        currentConfig = newConfig;
+        iniciarElementosAnimados();
+      }
+    });
+  </script>
+
+</body>
+</html>
